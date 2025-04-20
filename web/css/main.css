@@ -1,0 +1,559 @@
+:root{
+	--dark:			#0b2129;
+	--blue:			#223440;
+	--light:		#CACACA;
+	--gray:			#3f5664;
+	--steel:		#78878c;
+	--orange:		#ff9d3c;
+	--white:		#ffffff;
+	
+	--bg-button:	255 255 255;
+	--bg-button-hover: 255 151 60;
+	--bg-backdrop:	11 33 41;
+	/*--bg-backdrop:	0 0 0; */
+	
+	--ring-offset-shadow: 0 0 #0000;
+	--ring-shadow: 0 0 #0000;
+	--shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--backdrop-blur: blur(4px);
+
+}
+html{
+	height: 100%;
+	font-size: 62.5%; /* changes a default 16px font size to 10px */
+	margin: 0px;
+	font-family: 'Dosis', 'sans'; 
+}
+
+
+body {
+	margin: 0px;
+	height: 100%;
+	color: var(--white);
+	
+	background-image: url(../img/library.png);
+	background-position: center center;
+	background-size: cover;
+	background-attachment: fixed;
+	font-size: 160%;
+	float: left;
+	width:100%;
+}
+
+::-webkit-scrollbar {
+	width: 1rem;
+}
+
+::-webkit-scrollbar-track {
+	background-color:  var(--dark);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--orange);
+	border-color: rgb(var(--bg-button) / .25);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+}
+::-webkit-scrollbar-thumb:hover {
+	border-color: rgb(var(--bg-button-hover) / .25);
+}
+::-webkit-scrollbar-track-piece
+{
+   display:none;
+}
+
+textarea, button{
+	font-family: 'Dosis', 'sans'; 
+}
+
+header{
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	display: flex;
+
+	margin: 2rem;
+}
+.button{
+	display: table-cell;
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	
+	vertical-align: middle;
+	text-align: center;
+	
+	background-color: rgb(var(--bg-button) / .25);
+	border-color: rgb(var(--bg-button) / .25);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+
+	color: var(--orange);
+	transition: .1s linear;
+	transition-property: background-color,border-color;
+
+	/*position: relative;*/
+	cursor: pointer;
+}
+.button:hover,
+.menuItem .item:hover{
+	background-color: rgb(var(--bg-button-hover) / .25);
+	border-color: rgb(var(--bg-button-hover) / .25);
+}
+.button:disabled,
+.menuItem .item:disabled{
+	background-color: transparent;
+	color: rgb(var(--bg-button) / .25);
+	cursor: default;
+}
+
+.barButton{
+	display: table-cell;
+	/*
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	*/
+	vertical-align: middle;
+	text-align: center;
+	
+	background-color: rgb(var(--bg-button) / .25);
+	color: var(--orange);
+	transition: .1s linear;
+	transition-property: background-color;
+	border-width: 0px;
+	border-radius: 0px;
+
+	/*position: relative;*/
+	cursor: pointer;
+}
+.barButton:hover{
+	background-color: rgb(var(--bg-button-hover) / .25);
+}
+.barButton:disabled{
+	background-color: rgb(var(--bg-button) / .25);
+	color: rgb(var(--bg-button) / .25);
+	cursor: default;
+}
+.barButton.selected{
+	background-color: rgb(var(--bg-button-hover) / .25);
+}
+.largeButton{
+	font-size: 2rem;
+	line-height: 3rem !important;
+	padding: 0.5rem;
+	width: 4rem;
+	height: 4rem;
+	min-height: 4rem;
+}
+.smallButton{
+	height:2.2rem;
+	width:2.2rem;
+	font-size: 1rem;
+	line-height:2rem
+}
+.formButton{
+	height:3.2rem;
+	width:3.2rem;
+	font-size:2rem;
+}
+
+.iconLabel{
+	display: table-cell !important;
+	text-align: right;
+}
+
+.barSpacer{
+	display: table-cell;
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	
+	vertical-align: middle;
+	text-align: center;
+	
+	background-color: rgb(var(--bg-button) / .25);
+	border-width: 0px;
+	color: rgb(var(--white)/.25);
+	height:2.2rem;
+	width:3.2rem;
+	font-size:2rem;
+	padding-top:1rem;
+}
+
+.appTitle{
+	font-size: 4rem;
+	line-height: 1rem;
+	background-image: url(../img/library-logo.svg);
+	background-position: left center;
+	background-size: 6rem;
+	background-repeat: no-repeat;
+	height: 4rem;
+	vertical-align: middle;
+	text-align: center;
+	display: table-cell;
+	padding-left: 7rem;
+	padding-top: 3rem;
+}
+
+
+
+.backdrop{
+	background-color: rgba(var(--bg-backdrop) / 0.8);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: var(--backdrop-blur);
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	padding: 2rem;
+	border-color: rgb(255 255 255 / .15);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+}
+#mainMenu{
+	border-width: 1px;
+	border-style: solid;
+	border-color:transparent;
+	position: fixed;
+	margin-left:2rem;
+
+}
+#mainMenu > ul{
+	position:relative;
+	display:block;
+	width:13rem;	
+	margin: 0;
+	padding: 0;
+	gap: 1rem;
+	border-radius: 0.375rem;
+	border-style: solid;
+	overflow: hidden;
+	
+}
+#mainMenu ul li{
+	list-style: none;
+}
+.menuItem .item{
+	font-size: 2rem;
+	line-height: 1rem;
+	padding: 0.5rem;
+	height: 4rem;
+	width:13rem;
+	padding-left: 1rem;
+	align-items: center;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	border:none;
+	
+	vertical-align: middle;
+	text-align: center;
+	
+	background: none;
+
+	color: var(--orange);
+	transition: .1s linear;
+	transition-property: background-color,border-color;
+
+	cursor: pointer;
+}
+.menuItem .fa-solid{
+	width:3rem;
+} 
+/*
+.menuItem div{
+	display: table-cell;
+	vertical-align: middle;
+}
+	*/
+.menuItem .selected{
+	background-color: rgb(var(--bg-button-hover) / .25);
+}
+.menuItem .title{
+	padding-left:1rem;
+}
+
+.hidden{
+	display:none !important;
+}
+.page{
+	margin-left:17rem;
+	margin-right: 2rem;
+}
+
+.pageHeader{
+	/*
+	display:flex;
+	justify-content: space-between;
+	*/
+	align-items: center;
+	margin-bottom:2rem;
+}
+.pageHeader .row{
+	margin-bottom: 1rem;
+}
+
+.pageHeader .header{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 1rem;
+}
+.pageHeader .header .filters{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 1rem;
+	padding: 0.3rem;
+}
+.pageHeader .header .foundText{
+	font-size: 120%;
+}
+.pageHeader .header .filter{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 0.5rem;
+	
+}
+.tableList{
+	width:100%;
+}
+#BookList .row,
+#AuthorList .row,
+#SeriesList .row,
+#TagList .row{
+    display: flex;
+	flex-direction: row;
+	flex-wrap:nowrap;
+	gap:2rem;
+    justify-content: space-between;
+}
+
+.line{
+	border-top-color: rgb(255 255 255 / .15);
+	border-top-width: 1px;
+	border-top-style: solid;
+	width:50%;
+	margin: auto;
+	margin-top:2px;
+	margin-bottom:2px
+}
+
+.overlay {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0 0 0 / .9)
+}
+
+
+input, textarea{
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	padding:0.5rem;
+	background-color: rgb(var(--bg-button) / .25);
+	border-color: rgb(var(--bg-button) / .25);
+	border-radius: 0.375rem;
+	border-style: solid;
+	color: var(--white);
+	height:3.2rem;
+	outline: none;
+	border-width: 1px;
+	
+}
+input:focus, textarea:focus{
+	background-color: rgb(var(--bg-button-hover) / .25);
+}
+
+.label{
+	display:block;
+	width: 10rem;
+	padding:0.5rem;	
+}
+.label::after{
+	content: ":";
+}
+
+.warning{
+	display: table-cell;
+
+	vertical-align: middle;
+	text-align: center;
+	color: var(--orange);
+
+	height:3.2rem;
+	width:3.2rem;
+	font-size:2rem;
+	padding-top:0.5rem;
+
+}
+
+.tableList{
+
+	border-collapse: separate;
+	border-spacing: 0;
+	border-radius: 0.375rem;
+}
+.tablelist thead tr:first-child th:first-child{
+	border-top-left-radius:0.375rem;
+}
+.tablelist thead tr:first-child th:last-child{
+	border-top-right-radius:0.375rem;
+}
+
+.tablelist tbody tr:last-child td:first-child{
+	border-bottom-left-radius:0.375rem;
+}
+.tablelist tbody tr:last-child td:last-child{
+	border-bottom-right-radius:0.375rem;
+}
+
+.tableList th{
+	text-align:left;
+}
+.tableList tr{
+	height:3rem;
+}
+.tableList tr th{
+	background-color: rgb(var(--bg-button) / .15);
+}
+
+
+.tableList .zebra{
+	background-color: rgb(var(--bg-button) / .1);
+}
+.tableList .number{
+	width:3rem;
+	text-align: right;
+	padding-right: 0.5rem;
+}
+.tableList .buttonCell{
+	display: flex;
+	width: 8.1rem;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap:0.5rem;
+	height: 3rem;
+    padding-right: 0.5rem;	
+}
+.tableList .icons{
+	width: 8.1rem;
+
+}
+
+.YACSSTooltip {
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	border-color: rgb(var(--bg-button-hover) / .25);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+	background-color: rgba(var(--bg-backdrop) / 0.8);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: var(--backdrop-blur);
+
+	padding:0.5rem;
+	max-width:250px;
+	line-break:auto;
+	word-break:normal;
+	word-spacing:0px;
+	white-space:normal;
+	text-align:center;
+	verflow-wrap:normal;
+}
+	
+
+@media only screen and (max-width: 1200px) and (-moz-min-device-pixel-ratio: 2), 
+       only screen and (max-width: 1200px) and (-o-min-device-pixel-ratio: 2/1), 
+       only screen and (max-width: 1200px) and (-webkit-min-device-pixel-ratio: 2), 
+       only screen and (max-width: 1200px) and (min-device-pixel-ratio: 2){
+	html {
+		font-size: 10px;
+	}
+	header{
+		margin-left:0px;
+		margin-right: 0px;
+		margin-top: 0px;
+	}
+	.page{
+		margin-left:7rem;
+		margin-right: 0px;
+	}	
+	#mainMenu{
+		margin-left:0px;
+	
+	}
+	.menuItem button .title{
+		display:none
+	}
+	.menuItem .button{
+		font-size:3rem;
+		line-height: 1rem;
+		padding: 0.5rem;
+		height: 5rem;
+		width:6rem;
+		padding-left: 1rem;
+		display:flex;
+		align-items: center;
+	}
+	#mainMenu > ul{
+		width:6rem;	
+	}
+	#BookList .coverPanel{
+		width:224px;
+		height:450px;
+	}
+	#BookList .coverPanel .cover{
+		width:180px;
+		height:240px;
+		margin:22px;
+	}
+	
+}
+/*
+	boox air 3
+*/
+@media only screen and (max-width: 700px){
+	html {
+		font-size: 8px;
+	}
+	header{
+		margin-left:0px;
+		margin-right: 0px;
+		margin-top: 0px;
+	}
+	.page{
+		margin-left:7rem;
+		margin-right: 0px;
+	}	
+	#mainMenu{
+		margin-left:0px;
+	
+	}
+	.menuItem button .title{
+		display:none
+	}
+	.menuItem .button{
+	
+		line-height: 1rem;
+		padding: 0.5rem;
+		height: 5rem;
+		width:6rem;
+		padding-left: 1rem;
+		display:flex;
+		align-items: center;
+	}
+	#mainMenu > ul{
+		width:6rem;	
+	}
+	#BookList .coverPanel{
+		width:190px;
+		height:400px;
+	}
+	#BookList .coverPanel .cover{
+		width:180px;
+		height:240px;
+		margin:5px;
+	}
+	
+}

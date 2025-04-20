@@ -1,0 +1,410 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+	<title>Library v2.0</title>
+	
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/book.css" rel="stylesheet">
+	<link href="css/author.css" rel="stylesheet">
+	<link href="css/pagination.css" rel="stylesheet">	
+	<!--
+	<link href="css/chosen.tracklog.css" rel="stylesheet">
+	<link href="fonts/Dosis.css" rel="stylesheet">
+	-->
+	<link href="fonts/fontawesome/css/all.css " rel="stylesheet">
+
+	<!--
+	<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+	<link rel="manifest" href="site.webmanifest">
+	-->
+	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+	<!--
+
+	
+	<script type="text/javascript" src="js/chosen.jquery.js"></script>
+	-->
+	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/api.js"></script>
+	<script type="text/javascript" src="js/color.js"></script>
+	<script type="text/javascript" src="js/popup.js"></script>
+	<script type="text/javascript" src="js/cover.js"></script>	
+	<script type="text/javascript" src="js/book.js"></script>
+	<script type="text/javascript" src="js/author.js"></script>	
+	<script type="text/javascript" src="js/series.js"></script>	
+	<script type="text/javascript" src="js/bookpopup.js"></script>
+
+	<!-- https://www.jqueryscript.net/tooltip/tooltip-follow-cursor-yacsstooltip.html -->
+	<script type="text/javascript" src="js/jquery.YACSSTooltip.js"></script>
+	
+	<script>
+		var maxZ = 2000;
+	
+		$( document ).ready( function(){
+			init();
+		});
+	
+	</script>
+
+
+</head>
+<body>
+
+		<header class="backdrop">
+				<div class="appTitle">Library v2.0</div>
+		</header>
+		<nav id="mainMenu">
+		<ul  class="backdrop">
+			<li class="menuItem" >
+				<button class="item selected" id="menuitem-BookList" panel="BookList" title="List of books">
+					<div class="fa-solid fa-book"></div>
+					<div class="title">Books</div>
+				</button>
+			</li>
+			<li class="menuItem" >
+				<button class="item" id="menuitem-AuthorList" panel="AuthorList" title="List of authors">
+					<div class="fa-solid fa-people-group"></div>
+					<div class="title">Authors</div>
+				</button>
+			</li>
+			<li class="menuItem" >
+				<button class="item" id="menuitem-SeriesList" panel="SeriesList" title="List of series">
+					<div class="fa-solid fa-table-list"></div>
+					<div class="title">Series</div>
+				</button>
+			</li>
+			<li class="menuItem" >
+				<button class="item" id="menuitem-TagList" panel="TagList" title="List of tags">
+					<div class="fa-solid fa-tags"></div>
+					<div class="title">Tags</div>
+				</button>
+			</li>
+			<li class="menuItem" >
+				<button class="item" id="menuitem-Admin" panel="Admin" title="Maintenance functions">
+					<div class="fa-solid fa-screwdriver-wrench"></div>
+					<div class="title">Admin</div>
+				</button>
+			</li>
+		</ul>
+	</nav>
+	<main>
+		<div id="BookList" class="page backdrop">
+			<div class="pageHeader">
+				<div class="row">
+					<div class="header">
+						<div class="foundText">Books found: <span class="nrOfBooks"></span></div>
+						<div class="filters"></div>
+					</div>
+					<div class="navbar">
+						<input id="BookList_search" name="search"></input>
+						<button id="BookList_search_btn" class="button formButton fa-solid fa-magnifying-glass" title="Search for books"></button>
+					</div>
+				</div>
+				<div class="pagination">
+					<div class="wrapper">
+						<div class="pagesButtons">
+							<button class="firstButton formButton barButton fa-solid fa-angles-left" title="First page"></button>
+							<button class="prevButton formButton barButton fa-solid fa-angle-left" title="Previous page"></button>
+						</div>
+						<div class ="pageText text">Page:</div>
+						<div class="pagesButtons">						
+							<input type="text" name="page"/>
+							<button class="button formButton barButton jump fa-solid fa-angle-down" title="Goto that page"></button>
+						</div>
+						<div class="text maxPage"></div>
+						<div class="pagesButtons">
+							<button class="button formButton barButton reload fa-solid fa-rotate-right" title="Reload page"></button>
+							<button class="nextButton formButton barButton fa-solid fa-angle-right" title="Next page"></button>
+							<button class="lastButton formButton barButton fa-solid fa-angles-right" title="Last page"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="content">
+
+			</div>
+		</div>
+
+		<div id="BookEdit" class="page backdrop hidden">
+			<div class="pageHeader">
+				<div class="row">
+					<div class="navbar">
+						<button id="BookEdit_save" class="button largeButton fa-solid fa-floppy-disk" title="Save changes"></button>
+						<button id="BookEdit_cancel" class="button largeButton fa-solid fa-xmark" title="Discard changes"></button>
+					</div>
+				</div>
+			</div>
+			<div class="content">
+				<div class="rows">
+					<div class="cover">
+					</div>
+					<div class="right">
+						<div class="row">
+							<div class="label">Title</div>
+							<input id="BookEdit_title" name="title"></input>
+							<div class="buttons">
+								<button id="BookEdit_search" class="button formButton fa-solid fa-magnifying-glass" title="Search for title"></button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="label">Author(s)</div>
+							<div id="BookEdit_Authors"></div>
+						</div>
+						<div class="row">
+							<div class="label">Series</div>
+							<div id="BookEdit_Series"></div>
+						</div>
+						<div class="row">
+							<div class="label">Tag(s)</div>
+							<div id="BookEdit_Tags"></div>
+						</div>
+						<div class="row">
+							<div class="label">Blurb</div>
+							<textarea id="BookEdit_blurb" rows="2"></textarea>
+							<div class="buttons">
+								<div class="spacer"></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="label">Url</div>
+							<input id="BookEdit_url" name="url"></input>
+							<div class="buttons">
+								<button id="BookEdit_srape" class="button formButton fa-solid fa-file-arrow-down" title="Scrap webpage"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="AuthorList" class="page backdrop hidden">
+			<div class="pageHeader">
+				<div class="row">
+					<div class="header">
+						<div class="foundText">Authors found: <span class="nrOfAuthors"></span></div>
+						<div class="filters"></div>
+					</div>
+					<div class="navbar">
+						<input id="AuthorList_search" name="search"></input>
+						<button id="AuthorList_search_btn" class="button formButton fa-solid fa-magnifying-glass"></button>
+					</div>
+				</div>
+				<div class="pagination">
+					<div class="wrapper">
+						<div class="pagesButtons">
+							<button class="firstButton formButton barButton fa-solid fa-angles-left" title="First page"></button>
+							<button class="prevButton formButton barButton fa-solid fa-angle-left" title="Previous page"></button>
+						</div>
+						<div class ="pageText text">Page:</div>
+						<div class="pagesButtons">						
+							<input type="text" name="page"/>
+							<button class="button formButton barButton jump fa-solid fa-angle-down" title="Goto that page"></button>
+						</div>
+						<div class="text maxPage"></div>
+						<div class="pagesButtons">
+							<button class="button formButton barButton reload fa-solid fa-rotate-right" title="Reload page"></button>
+							<button class="nextButton formButton barButton fa-solid fa-angle-right" title="Next page"></button>
+							<button class="lastButton formButton barButton fa-solid fa-angles-right" title="Last page"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<table class="tableList content">
+				<thead>
+					<tr>
+						<th class="number">Id</th>
+						<th style="width: auto;">Name</th>
+						<th style="width: auto;">Url</th>
+						<th class="number fa-solid fa-book iconLabel"></th>						
+						<th class="icons"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="SeriesList" class="page backdrop hidden">
+			<div class="pageHeader">
+				<div class="row">
+					<div class="header">
+						<div class="foundText">Series found: <span class="nrOfSeries"></span></div>
+						<div class="filters"></div>
+					</div>
+					<div class="navbar">
+						<input id="SeriesList_search" name="search"></input>
+						<button id="SeriesList_search_btn" class="button formButton fa-solid fa-magnifying-glass"></button>
+					</div>
+				</div>
+				<div class="pagination">
+					<div class="wrapper">
+						<div class="pagesButtons">
+							<button class="firstButton formButton barButton fa-solid fa-angles-left" title="First page"></button>
+							<button class="prevButton formButton barButton fa-solid fa-angle-left" title="Previous page"></button>
+						</div>
+						<div class ="pageText text">Page:</div>
+						<div class="pagesButtons">						
+							<input type="text" name="page"/>
+							<button class="button formButton barButton jump fa-solid fa-angle-down" title="Goto that page"></button>
+						</div>
+						<div class="text maxPage"></div>
+						<div class="pagesButtons">
+							<button class="button formButton barButton reload fa-solid fa-rotate-right" title="Reload page"></button>
+							<button class="nextButton formButton barButton fa-solid fa-angle-right" title="Next page"></button>
+							<button class="lastButton formButton barButton fa-solid fa-angles-right" title="Last page"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<table class="tableList content">
+				<thead>
+					<tr>
+						<th class="number">Id</th>
+						<th style="width: auto;">Title</th>
+						<th style="width: auto;">Url</th>
+						<th class="number fa-solid fa-book iconLabel"></th>						
+						<th class="icons"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="TagList" class="page backdrop hidden">
+			<div class="pageHeader">
+				<div class="row">
+					<div class="header">
+						<div class="foundText">Series found: <span class="nrOfSeries"></span></div>
+						<div class="filters"></div>
+					</div>
+					<div class="navbar">
+						<input id="TagList_search" name="search"></input>
+						<button id="TagList_search_btn" class="button formButton fa-solid fa-magnifying-glass"></button>
+					</div>
+				</div>
+				<div class="pagination">
+					<div class="wrapper">
+						<div class="pagesButtons">
+							<button class="firstButton formButton barButton fa-solid fa-angles-left" title="First page"></button>
+							<button class="prevButton formButton barButton fa-solid fa-angle-left" title="Previous page"></button>
+						</div>
+						<div class ="pageText text">Page:</div>
+						<div class="pagesButtons">						
+							<input type="text" name="page"/>
+							<button class="button formButton barButton jump fa-solid fa-angle-down" title="Goto that page"></button>
+						</div>
+						<div class="text maxPage"></div>
+						<div class="pagesButtons">
+							<button class="button formButton barButton reload fa-solid fa-rotate-right" title="Reload page"></button>
+							<button class="nextButton formButton barButton fa-solid fa-angle-right" title="Next page"></button>
+							<button class="lastButton formButton barButton fa-solid fa-angles-right" title="Last page"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<table class="tableList content">
+				<thead>
+					<tr>
+						<th class="number">Id</th>
+						<th style="width: auto;">Title</th>
+						<th style="width: auto;">Url</th>
+						<th class="number fa-solid fa-book iconLabel"></th>						
+						<th class="icons"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div id="Admin" class="page backdrop hidden">
+		</div>
+	</main>
+
+
+	<div id="BookOverlay" class="wrapper overlay">
+		<div class="popup">
+			<div class="edit">
+				<button id="BookOverlay_download" class="button largeButton fa-solid fa-download" title="Download book"></button>
+				<button id="BookOverlay_link" class="button largeButton fa-solid fa-up-right-from-square" title="Go to Book's webpage"></button>
+				<button id="BookOverlay_edit" class="button largeButton fa-solid fa-pencil" title="Edit metadata"></button>
+				<button id="BookOverlay_cancel" class="button largeButton fa-solid fa-xmark" title="Close"></button>
+			</div>
+			<div class="popupContent popupColumns">
+				<div class="left">
+					<div class="cover">
+
+					</div>
+					<div class="file"></div>
+				</div>
+				<div class="right">
+					<div class="title"></div>
+					<div class="line"></div>
+					<div class="authorContainer container"></div>
+					<div class="line"></div>
+					<div class="seriesContainer container"></div>
+					<div class="line"></div>
+					<div class="tagContainer"></div>
+					<div class="line"></div>
+					<div class="blurb"></div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="BookScraperOverlay" class="wrapper overlay">
+		<div class="popup">
+			<div class="edit">
+				<button id="BookScraper_ok" class="button largeButton fa-solid fa-check" title="Apply"></button>
+				<button id="BookScraper_cancel" class="button largeButton fa-solid fa-xmark" title="Discard"></button>
+			</div>
+			<div class="popupContent popupRows">
+				<div class="columnLabel">From the internet</div>
+				<div class="middle"></div>
+				<div class="columnLabel">From the local database</div>
+				<div class="line"></div>
+
+				<div class="partLabel">Title</div>
+
+				<div id="scraperTitleFrom" class="from field"></div>
+				<button id="BookScraper_title" class="middle button formButton fa-solid fa-right-to-bracket" title="Replace title"></button>
+				<div id="scraperTitleTo" class="to field"></div>
+
+				<div class="line"></div>
+				<div class="partLabel">Authors</div>
+				<div id="scraperAuthorFrom" class="from"></div>
+				<div class="buttonrow middle">
+					<button id="BookScraper_replaceAuthor" class="button formButton fa-solid fa-right-to-bracket" title="Replace author"></button>
+					<button id="BookScraper_addAuthor" class="button formButton fa-solid fa-plus" title="Add author"></button>
+				</div>
+				<div id="scraperAuthorTo" class="to"></div>
+
+				<div class="line"></div>
+				<div class="partLabel">Series</div>
+				<div id="scraperSeriesFrom" class="from"></div>
+				<div class="buttonrow middle">
+					<button id="BookScraper_replaceSeries" class="button formButton fa-solid fa-right-to-bracket" title="Replace series"></button>
+					<button id="BookScraper_addSeries" class="button formButton fa-solid fa-plus" title="Add series"></button>
+				</div>
+				<div id="scraperSeriesTo" class="to"></div>
+				<div class="line"></div>
+				<div class="partLabel">Tags</div>
+				<div id="scraperTagsFrom" class="from"></div>
+				<div class="buttonrow middle">
+					<button id="BookScraper_replaceTag" class="button formButton fa-solid fa-right-to-bracket" title="Replace tag"></button>
+					<button id="BookScraper_addTag" class="button formButton fa-solid fa-plus" title="Add tag"></button>
+				</div>
+				<div id="scraperTagsTo" class="to"></div>
+
+				<div class="line"></div>
+				<div class="partLabel">Blurb</div>
+				<div id="scraperBlurbFrom" class="from field"></div>
+				<button id="BookScraper_blurb" class="middle button formButton fa-solid fa-right-to-bracket" title="Replace blurb"></button>
+				<div id="scraperBlurbTo" class="to field"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

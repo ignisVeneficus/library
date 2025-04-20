@@ -1,0 +1,48 @@
+.pagination{
+    display:flex;
+    justify-content:center
+}
+.pagination .pagesButtons{
+    border-color: rgb(var(--bg-button) / .25);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+ 	justify-content: space-between;
+}
+.pagination .wrapper{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+ 	justify-content: space-between;
+    gap: 0.5rem;
+}
+.pagination .spacer{
+	height:3.2rem;
+	width:3.2rem;
+	font-size:2rem;
+}
+.pagination input{
+    width:4rem;
+	border-width: 0px;
+	border-radius: 0px;
+    text-align: right;
+	background-color: rgb(var(--bg-button) / .25);
+    font-size: inherit;
+
+}
+.pagination .text{
+    display: table-cell;
+    padding-top:0.5rem;
+	vertical-align: middle;
+}
+.pagination .maxPage{
+    width:5rem;
+	text-align: left;
+}
+.pagination .pageText{
+    width:5rem;
+	text-align: right;
+}
