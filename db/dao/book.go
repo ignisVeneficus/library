@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 	"database/sql"
-	"ignis/library/server/db/dbo"
+	"github.com/ignisVeneficus/library/db/dbo"
 	"strings"
 
 	"github.com/rs/zerolog/log"

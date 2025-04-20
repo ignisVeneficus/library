@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"database/sql"
-	"ignis/library/server/db/dbo"
+	"github.com/ignisVeneficus/library/db/dbo"
 
 	"github.com/rs/zerolog/log"
 )

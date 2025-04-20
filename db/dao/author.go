@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"ignis/library/server/db/dbo"
+	"github.com/ignisVeneficus/library/db/dbo"
 	"strings"
 
 	"github.com/rs/zerolog/log"

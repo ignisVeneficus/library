@@ -1,4 +1,4 @@
-module ignis/library/server
+module github.com/ignisVeneficus/library
 
 go 1.23.4
 

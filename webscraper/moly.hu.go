@@ -1,7 +1,7 @@
 package webscraper
 
 import (
-	"ignis/library/server/utils"
+	"github.com/ignisVeneficus/library/utils"
 	"regexp"
 	"strconv"
 	"strings"

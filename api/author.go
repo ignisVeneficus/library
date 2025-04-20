@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"ignis/library/server/db"
-	"ignis/library/server/db/dao"
-	"ignis/library/server/db/dbo"
+	"github.com/ignisVeneficus/library/db"
+	"github.com/ignisVeneficus/library/db/dao"
+	"github.com/ignisVeneficus/library/db/dbo"
 	"net/http"
 	"strconv"
 

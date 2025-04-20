@@ -15,10 +15,10 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"ignis/library/server/db"
-	"ignis/library/server/db/dao"
-	"ignis/library/server/db/dbo"
-	"ignis/library/server/utils"
+	"github.com/ignisVeneficus/library/db"
+	"github.com/ignisVeneficus/library/db/dao"
+	"github.com/ignisVeneficus/library/db/dbo"
+	"github.com/ignisVeneficus/library/utils"
 
 	"github.com/ignisVeneficus/ebook/eBookData"
 	"github.com/ignisVeneficus/ebook/epub"

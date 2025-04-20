@@ -14,13 +14,13 @@ import (
 	"go.mau.fi/zeroconfig"
 	"gopkg.in/yaml.v3"
 
-	"ignis/library/server/api"
-	"ignis/library/server/config"
-	"ignis/library/server/db"
-	"ignis/library/server/db/dao"
-	"ignis/library/server/file"
-	"ignis/library/server/scraper"
-	"ignis/library/server/status"
+	"github.com/ignisVeneficus/library/api"
+	"github.com/ignisVeneficus/library/config"
+	"github.com/ignisVeneficus/library/db"
+	"github.com/ignisVeneficus/library/db/dao"
+	"github.com/ignisVeneficus/library/file"
+	"github.com/ignisVeneficus/library/scraper"
+	"github.com/ignisVeneficus/library/status"
 )
 
 var (

@@ -1,6 +1,6 @@
 package api
 
-import "ignis/library/server/db/dbo"
+import "github.com/ignisVeneficus/library/db/dbo"
 
 type Tag struct {
 	TagId NullNumber `json:"id"`

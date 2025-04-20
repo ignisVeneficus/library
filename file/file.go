@@ -1,7 +1,7 @@
 package file
 
 import (
-	"ignis/library/server/api"
+	"github.com/ignisVeneficus/library/api"
 	"os"
 )
 

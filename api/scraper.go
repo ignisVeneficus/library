@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"ignis/library/server/webscraper"
+	"github.com/ignisVeneficus/library/webscraper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
