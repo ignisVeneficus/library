@@ -40,6 +40,10 @@ It is designed to run:
 git clone https://github.com/ignisVeneficus/library.git
 cd library
 go build -o library
+```
+Set up the environment variables
+than
+```bash
 ./library
 ```
 Then visit 👉 http://localhost:8080
@@ -68,6 +72,7 @@ export LIBRARY_DB_HOST=localhost:5432
 export LIBRARY_DB_DATABASE=library
 export LIBRARY_BOOKS=/path/to/ebooks
 export LIBRARY_COVERS=/path/to/covers
+./library
 ```
 ### Command-line Flags
 
@@ -78,11 +83,52 @@ export LIBRARY_COVERS=/path/to/covers
 | `--noCheck`,`-nc`     | *none* |No eBooks check at start                    |
 | `--export`, `-e`      | *export file name* | Export database in json format |
 
-### 🛣️ Roadmap
+## 🪵 Logging
+
+This application uses [zerolog](https://github.com/rs/zerolog) for structured, high-performance logging.
+
+Configuration is managed via [zeroconfig](https://pkg.go.dev/go.mau.fi/zeroconfig), allowing runtime log level and format customization through a config file.
+
+### 🔧 Configuration
+
+Logging settings are read from a file named `log.config` located in the working directory.  
+It supports both JSON and plain text output, log levels, and other zerolog features.
+
+Example `log.config` (already part of the code):
+
+```yaml
+min_level: info
+#min_level: trace
+max_level: fatal
+caller: false
+metadata: null
+writers:
+- type: file
+  filename: server.log
+  max_size: 10
+  max_age: 0
+  max_backups: 1
+  local_time: false
+  compress: false
+- type: stdout
+  format: pretty-colored
+  time_format: 2006-01-02 15:04:05
+  min_level: trace
+  max_level: fatal
+```
+For full configuration options, see the [zeroconfig documentation](https://github.com/tulir/zeroconfig).
+
+## 🛣️ Roadmap
+ - ☐ Edit Author
+ - ☐ Edit Series
+ - ☐ Edit Tag
+ - ☐ Maintaince tasks (delete orphan authors, tags, series, etc )
+ - ☐ UI redesign for smaller screens
  - ☐ Import 
  - ☐ Docker container
+ - ☐ Possibility to change UI to different webapp
 
-### 📝 License
+## 📝 License
 This project is licensed under the MIT License.
 See the LICENSE file for details.
 
