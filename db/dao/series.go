@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"database/sql"
+
 	"github.com/ignisVeneficus/library/db/dbo"
 
 	"github.com/rs/zerolog/log"
@@ -174,6 +175,31 @@ func (q *Queries) GetSeriesQty(ctx context.Context, title string) (int64, error)
 	return count, err
 }
 
+const querySeriesAutocomplete = `SELECT s.seriesid, s.title, s.url FROM series AS s WHERE s.title like concat('%',?,'%')`
+
+func (q *Queries) QuerySeriesAutocomplete(ctx context.Context, title string) ([]dbo.AutoComplete, error) {
+	rows, err := q.db.QueryContext(ctx, querySeriesAutocomplete, title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []dbo.AutoComplete
+	for rows.Next() {
+		var i dbo.AutoComplete
+		if err := rows.Scan(&i.Id, &i.Name, &i.Url); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 // ///////////////////////
 func UpdateBookSeriesTBLK(q *Queries, ctx context.Context, bookId int64, series dbo.BookSeries) error {
 	log.Logger.Debug().Int64("Series", series.SeriesId.Int64).Msg("Start UpdateSeriesTBLK")
@@ -286,4 +312,15 @@ func GetSeriesQty(db *sql.DB, query string, ctx context.Context) (int64, error) 
 	}
 	log.Logger.Debug().Str("Query", query).Msg("End Get Series Qty")
 	return qty, nil
+}
+func QuerySeriesAutocomplete(db *sql.DB, ctx context.Context, query string) ([]dbo.AutoComplete, error) {
+	log.Logger.Debug().Str("Query", query).Msg("Start Query Series for autocomplete")
+	queries := NewQueries(db)
+	series, err := queries.QuerySeriesAutocomplete(ctx, query)
+	if err != nil {
+		log.Logger.Error().Str("Query", query).Err(err).Msg("Query Series for autocomplete Failed")
+		return make([]dbo.AutoComplete, 0), err
+	}
+	log.Logger.Debug().Str("Query", query).Msg("End Query Series for autocomplete")
+	return series, nil
 }

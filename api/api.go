@@ -7,6 +7,8 @@ import (
 	"math"
 	"net/http"
 
+	"github.com/ignisVeneficus/library/db/dbo"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -21,6 +23,21 @@ type Pagination struct {
 type Filter struct {
 	FilterType  string `json:"type"`
 	FilterValue string `json:"value"`
+}
+
+type SuggestionData struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+type SuggestionItem struct {
+	Value string         `json:"value"`
+	Data  SuggestionData `json:"data"`
+}
+
+type Suggestions struct {
+	Query string           `json:"query"`
+	List  []SuggestionItem `json:"suggestions"`
 }
 
 func getPagination(base string, qty int64, page int, qtyPage int) Pagination {
@@ -97,4 +114,26 @@ func DownloadAllBook(c *gin.Context) {
 	c.Header("Content-Disposition", "attachment; filename=books.json")
 	c.Data(http.StatusOK, "application/octet-stream", data)
 	log.Logger.Debug().Msg("End Api.DownloadAllBook")
+}
+
+func CreateSuggestionItem(data SuggestionData) SuggestionItem {
+	return SuggestionItem{
+		Value: data.Name,
+		Data:  data,
+	}
+}
+func CreateSuggestion(query string, result []dbo.AutoComplete) Suggestions {
+	list := make([]SuggestionItem, len(result))
+	for i, dboAutocomplete := range result {
+		list[i] = CreateSuggestionItem(SuggestionData{
+			Name: dboAutocomplete.Name,
+			Id:   dboAutocomplete.Id,
+			Url:  dboAutocomplete.StrUrl(),
+		})
+	}
+	return Suggestions{
+		Query: query,
+		List:  list,
+	}
+
 }

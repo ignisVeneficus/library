@@ -463,6 +463,23 @@ input:focus, textarea:focus{
 }
 	
 
+.autocomplete-suggestions{
+	box-shadow: var(--ring-offset-shadow, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow);
+	border-color: rgb(var(--bg-button-hover) / .25);
+	border-width: 1px;
+	border-radius: 0.375rem;
+	border-style: solid;
+	background-color: rgba(var(--bg-backdrop) / 0.8);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: var(--backdrop-blur);
+	color: var(--white);
+	padding:0.5rem;
+}
+.autocomplete-suggestions .autocomplete-selected{
+	background-color: rgb(var(--bg-button-hover) / .25);
+}
+
+
 @media only screen and (max-width: 1200px) and (-moz-min-device-pixel-ratio: 2), 
        only screen and (max-width: 1200px) and (-o-min-device-pixel-ratio: 2/1), 
        only screen and (max-width: 1200px) and (-webkit-min-device-pixel-ratio: 2), 

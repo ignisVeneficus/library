@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/ignisVeneficus/library/db/dbo"
 	"strings"
+
+	"github.com/ignisVeneficus/library/db/dbo"
 
 	"github.com/rs/zerolog/log"
 )
@@ -177,6 +178,31 @@ func (q *Queries) GetAuthorQty(ctx context.Context, name string) (int64, error) 
 	return count, err
 }
 
+const queryAuthorAutocomplete = `SELECT a.authorid, a.name, a.url FROM author AS a WHERE a.name like concat('%',?,'%')`
+
+func (q *Queries) QueryAuthorAutocomplete(ctx context.Context, title string) ([]dbo.AutoComplete, error) {
+	rows, err := q.db.QueryContext(ctx, queryAuthorAutocomplete, title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []dbo.AutoComplete
+	for rows.Next() {
+		var i dbo.AutoComplete
+		if err := rows.Scan(&i.Id, &i.Name, &i.Url); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 // <======================[ Public functions ]==============================>
 
 func GetAuthorByName(db *sql.DB, ctx context.Context, authorName string) (dbo.Author, error) {
@@ -343,4 +369,15 @@ func GetAuthorQty(db *sql.DB, ctx context.Context, query string) (int64, error) 
 	}
 	log.Logger.Debug().Str("Query", query).Msg("End Get Author Qty")
 	return qty, nil
+}
+func QueryAuthorAutocomplete(db *sql.DB, ctx context.Context, query string) ([]dbo.AutoComplete, error) {
+	log.Logger.Debug().Str("Query", query).Msg("Start Query Author for autocomplete")
+	queries := NewQueries(db)
+	series, err := queries.QueryAuthorAutocomplete(ctx, query)
+	if err != nil {
+		log.Logger.Error().Str("Query", query).Err(err).Msg("Query Author for autocomplete Failed")
+		return make([]dbo.AutoComplete, 0), err
+	}
+	log.Logger.Debug().Str("Query", query).Msg("End Query Author for autocomplete")
+	return series, nil
 }

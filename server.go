@@ -122,6 +122,10 @@ func main() {
 		router.GET("/api/author", api.GetAllAuthor)
 		router.GET("/api/series", api.GetAllSeries)
 
+		router.GET("/api/query/series/", api.QuerySeries)
+		router.GET("/api/query/tag/", api.QueryTags)
+		router.GET("/api/query/author/", api.QueryAuthors)
+
 		router.GET("/api/scraper/", api.Scrape)
 		router.GET("/api/export", api.DownloadAllBook)
 

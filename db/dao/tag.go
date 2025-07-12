@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"database/sql"
+
 	"github.com/ignisVeneficus/library/db/dbo"
 
 	"github.com/rs/zerolog/log"
@@ -97,6 +98,31 @@ func (q *Queries) DivideTagsFromBook(ctx context.Context, bookId int64, tagsIds 
 	return err
 }
 
+const queryTagsAutocomplete = `SELECT t.tagId, t.name FROM tag AS t WHERE t.name like concat('%',?,'%')`
+
+func (q *Queries) QueryTagsAutocomplete(ctx context.Context, title string) ([]dbo.AutoComplete, error) {
+	rows, err := q.db.QueryContext(ctx, queryTagsAutocomplete, title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []dbo.AutoComplete
+	for rows.Next() {
+		var i dbo.AutoComplete
+		if err := rows.Scan(&i.Id, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 // ///////////////////////////////
 func UpdateTagTBLK(q *Queries, ctx context.Context, bookId int64, tag dbo.Tag) error {
 	log.Logger.Debug().Int64("Tag", tag.TagId.Int64).Msg("Start UpdateTagTBLK")
@@ -174,4 +200,15 @@ func DivideBookAllOtherTags(q *Queries, ctx context.Context, bookId int64, tagId
 
 	log.Logger.Debug().Int64("Book", bookId).Ints64("TagIds", tagIds).Msg("End Divide Book All Other Tags")
 	return nil
+}
+func QueryTagsAutocomplete(db *sql.DB, ctx context.Context, query string) ([]dbo.AutoComplete, error) {
+	log.Logger.Debug().Str("Query", query).Msg("Start Query Tags for autocomplete")
+	queries := NewQueries(db)
+	series, err := queries.QueryTagsAutocomplete(ctx, query)
+	if err != nil {
+		log.Logger.Error().Str("Query", query).Err(err).Msg("Query Tags for autocomplete Failed")
+		return make([]dbo.AutoComplete, 0), err
+	}
+	log.Logger.Debug().Str("Query", query).Msg("End Query Tags for autocomplete")
+	return series, nil
 }

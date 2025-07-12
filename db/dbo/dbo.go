@@ -92,3 +92,12 @@ type Tag struct {
 	Name  string
 	Color sql.NullString
 }
+type AutoComplete struct {
+	Id   int
+	Name string
+	Url  sql.NullString
+}
+
+func (s *AutoComplete) StrUrl() string {
+	return getStr(s.Url)
+}

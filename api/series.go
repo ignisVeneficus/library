@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	"database/sql"
+	"net/http"
+
 	"github.com/ignisVeneficus/library/db"
 	"github.com/ignisVeneficus/library/db/dao"
 	"github.com/ignisVeneficus/library/db/dbo"
-	"net/http"
 
 	"strconv"
 
@@ -122,4 +123,20 @@ func GetAllSeries(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, ret)
 	log.Logger.Debug().Str("Query", query).Msg("End Api.GetAllSeries")
+}
+func QuerySeries(c *gin.Context) {
+	query := c.DefaultQuery("query", "")
+	ctx := context.Background()
+	database := db.GetDatabase()
+	log.Logger.Debug().Str("Query", query).Msg("Start Api.QuerySeries")
+
+	dboAutocomplete, err := dao.QuerySeriesAutocomplete(database, ctx, query)
+	if err != nil {
+		log.Logger.Debug().Str("Query", query).Err(err).Msg("Api.QuerySeries Failed")
+		c.JSON(http.StatusInternalServerError, "")
+		return
+	}
+	result := CreateSuggestion(query, dboAutocomplete)
+	c.IndentedJSON(http.StatusOK, result)
+	log.Logger.Debug().Str("Query", query).Msg("End Api.QuerySeries")
 }

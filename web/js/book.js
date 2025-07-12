@@ -85,6 +85,19 @@ function displayABook(data){
     doPopupBook(data);
 }
 
+function changeAuthorRow(row,id,name,url){
+	idfield = row.find(".id");
+	origId = idfield.data("orig");
+	if((origId!=null) && (origId == id)){
+		idfield.htmnl(id);
+	}
+	else{
+		idfield.html("");
+	}
+	row.find(".name").val(name);
+	row.find(".url").val(url);
+	checkRowWith(row);
+}
 
 function addAuthorRow(before,author,addOrig){
 	if(before == null){
@@ -94,9 +107,17 @@ function addAuthorRow(before,author,addOrig){
 	row.insertBefore(before);
 	var id = $("<div class=\"id\"></div>");
 	id.appendTo(row);
-	var nameN=$("<input name=\"name\"></input>");
+	var nameN=$("<input name=\"name\" class=\"name\"></input>");
 	nameN.appendTo(row);
-	var urlN=$("<input name=\"url\"></input>");
+	nameN.autocomplete({
+		noCache:true,
+		minChars:3,
+		serviceUrl:"/api/query/author/",
+		dataType:"json",
+		onSelect: function (suggestion) {
+			changeAuthorRow(row,suggestion.data.id,suggestion.data.name,suggestion.data.url);},
+	});
+	var urlN=$("<input name=\"url\" class=\"url\"></input>");
 	urlN.appendTo(row);
 	var btnN = $("<div class=\"buttons\"></div>");
 	btnN.appendTo(row);
@@ -110,6 +131,7 @@ function addAuthorRow(before,author,addOrig){
 		nameN.val(author.name);
 		urlN.val(author.url);
 		if(addOrig){
+			id.data("orig",author.id);
 			nameN.data("orig",author.name).on( "focusout",checkRow)
 			urlN.data("orig",author.url).on( "focusout",checkRow)
 		}
@@ -138,19 +160,42 @@ function fillEditAuthors(authors){
 	});
 
 }
+
+function changeSeriesRow(row,id,name,url){
+	idfield = row.find(".id");
+	origId = idfield.data("orig");
+	if((origId!=null) && (origId == id)){
+		idfield.htmnl(id);
+	}
+	else{
+		idfield.html("");
+	}
+	row.find(".name").val(name);
+	row.find(".url").val(url);
+	checkRowWith(row);
+}
+
 function addSeriesRow(before,series,addOrig){
 	if(before==null){
 		before = $("#newSeriesRow");
 	}
-	var row = $("<div class=\"row\"></div>");
+	var row = $("<div class=\"row\"></div>").data("hasOrig",series!=null&&addOrig);
 	row.insertBefore(before);
 	var id = $("<div class=\"id\"></div>");
 	id.appendTo(row);
-	var nameN=$("<input name=\"name\"></input>");
+	var nameN=$("<input name=\"name\" class=\"name\"></input>");
 	nameN.appendTo(row);
+	nameN.autocomplete({
+		noCache:true,
+		minChars:3,
+		serviceUrl:"/api/query/series/",
+		dataType:"json",
+		onSelect: function (suggestion) {
+			changeSeriesRow(row,suggestion.data.id,suggestion.data.name,suggestion.data.url);},
+	});
 	var seqN=$("<input name=\"seqno\" class=\"seqno\"></input>");
 	seqN.appendTo(row);
-	var urlN=$("<input name=\"url\"></input>");
+	var urlN=$("<input name=\"url\" class=\"url\"></input>");
 	urlN.appendTo(row);
 	var btnN = $("<div class=\"buttons\"></div>");
 	btnN.appendTo(row);
@@ -165,6 +210,7 @@ function addSeriesRow(before,series,addOrig){
 		seqN.val(series.seqno);
 		urlN.val(series.url);
 		if(addOrig){
+			id.data("orig",series.id);
 			nameN.data("orig",series.name).on( "focusout",checkRow);
 			seqN.data("orig",series.seqno).on( "focusout",checkRow);
 			urlN.data("orig",series.url).on( "focusout",checkRow);
@@ -195,16 +241,38 @@ function fillEditSeries(series){
 
 }
 
+function changeTagRow(row,id,name,url){
+	idfield = row.find(".id");
+	origId = idfield.data("orig");
+	if((origId!=null) && (origId == id)){
+		idfield.htmnl(id);
+	}
+	else{
+		idfield.html("");
+	}
+	row.find(".name").val(name);
+	checkRowWith(row);
+}
+
+
 function addTagRow(before,tag,addOrig){
 	if(before==null){
 		before = $("#newTagRow");
 	}
-	var row = $("<div class=\"row\"></div>");
+	var row = $("<div class=\"row\"></div>").data("hasOrig",tag!=null&&addOrig);
 	row.insertBefore(before);
 	var id = $("<div class=\"id\"></div>");
 	id.appendTo(row);
-	var nameN=$("<input name=\"name\"></input>");
+	var nameN=$("<input name=\"name\" class=\"name\"></input>");
 	nameN.appendTo(row);
+	nameN.autocomplete({
+		noCache:true,
+		minChars:3,
+		serviceUrl:"/api/query/tag/",
+		dataType:"json",
+		onSelect: function (suggestion) {
+			changeTagRow(row,suggestion.data.id,suggestion.data.name);},
+	});
 	var btnN = $("<div class=\"buttons\"></div>")
 	btnN.appendTo(row);
 	var deleteBtn = $("<button class=\"button formButton fa-solid fa-trash-can\" title=\"Remove tag\"></button>").addTooltip();
@@ -216,6 +284,7 @@ function addTagRow(before,tag,addOrig){
 		id.html(tag.id);
 		nameN.val(tag.name);
 		if(addOrig){
+			id.data("orig",tag.id);
 			nameN.data("orig",tag.name).on( "focusout",checkRow);
 		}
 	}
@@ -255,7 +324,7 @@ function checkRowWith(row){
 	var hasChanged = false;
 	input.each(function(){
 		if($(this).val()!=$(this).data("orig")){
-			hasChanged=true
+			hasChanged=true;
 			$(this).addClass("changed");
 		}
 	});
@@ -274,6 +343,8 @@ function checkRowWith(row){
 		input.each(function(){
 			$(this).val($(this).data("orig"));
 		});
+		var id=$(".id",row);
+		id.html(id.data("orig"));
 		checkRowWith(row);
 	}).addTooltip();
 	$(".buttons",row).prepend(warning);

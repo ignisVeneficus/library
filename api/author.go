@@ -2,11 +2,12 @@ package api
 
 import (
 	"context"
+	"net/http"
+	"strconv"
+
 	"github.com/ignisVeneficus/library/db"
 	"github.com/ignisVeneficus/library/db/dao"
 	"github.com/ignisVeneficus/library/db/dbo"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -109,4 +110,20 @@ func GetAllAuthor(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, ret)
 	log.Logger.Debug().Msg("End Api.GetAllAuthor")
+}
+func QueryAuthors(c *gin.Context) {
+	query := c.DefaultQuery("query", "")
+	ctx := context.Background()
+	database := db.GetDatabase()
+	log.Logger.Debug().Str("Query", query).Msg("Start Api.QueryAuthors")
+
+	dboAutocomplete, err := dao.QueryAuthorAutocomplete(database, ctx, query)
+	if err != nil {
+		log.Logger.Debug().Str("Query", query).Err(err).Msg("Api.QueryAuthors Failed")
+		c.JSON(http.StatusInternalServerError, "")
+		return
+	}
+	result := CreateSuggestion(query, dboAutocomplete)
+	c.IndentedJSON(http.StatusOK, result)
+	log.Logger.Debug().Str("Query", query).Msg("End Api.QueryAuthors")
 }
