@@ -89,7 +89,7 @@ function changeAuthorRow(row,id,name,url){
 	idfield = row.find(".id");
 	origId = idfield.data("orig");
 	if((origId!=null) && (origId == id)){
-		idfield.htmnl(id);
+		idfield.html(id);
 	}
 	else{
 		idfield.html("");
@@ -165,7 +165,7 @@ function changeSeriesRow(row,id,name,url){
 	idfield = row.find(".id");
 	origId = idfield.data("orig");
 	if((origId!=null) && (origId == id)){
-		idfield.htmnl(id);
+		idfield.html(id);
 	}
 	else{
 		idfield.html("");
@@ -245,7 +245,7 @@ function changeTagRow(row,id,name,url){
 	idfield = row.find(".id");
 	origId = idfield.data("orig");
 	if((origId!=null) && (origId == id)){
-		idfield.htmnl(id);
+		idfield.html(id);
 	}
 	else{
 		idfield.html("");

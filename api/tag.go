@@ -11,10 +11,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// book tag item
 type Tag struct {
-	TagId NullNumber `json:"id"`
-	Name  string     `json:"name"`
-	Color NullString `json:"color"`
+	//id fo the tag
+	TagId NullNumber `json:"id" swaggertype:"integer"`
+	//name of the tag
+	Name string `json:"name"`
+	//Color of the tag
+	Color NullString `json:"color" swaggertype:"string"`
 }
 
 func convertDBOTagToApiTag(dbo dbo.Tag) Tag {
@@ -31,6 +35,15 @@ func convertApiTagToDBOTag(api Tag) dbo.Tag {
 		Color: api.Color.NullString,
 	}
 }
+
+// QueryTags endpoint
+// @Summary Query Tags for autocomplete
+// @Description The endpont give back a list of tags for the given query string
+// @Param query query string false "A query string used to filter tags based on their title."
+// @Tags tags
+// @Produce json
+// @Success 200 {object} Suggestions
+// @Router /query/tags [get]
 func QueryTags(c *gin.Context) {
 	query := c.DefaultQuery("query", "")
 	ctx := context.Background()

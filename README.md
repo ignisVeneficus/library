@@ -32,7 +32,6 @@ It is designed to run:
 - ✅ Go 1.21+
 - ✅ Mysql/mariadb database
 - ✅ Local folder with ebooks
-- ✅ (Optional) SQLite database
 
 ### Installation
 
@@ -46,7 +45,7 @@ than
 ```bash
 ./library
 ```
-Then visit 👉 http://localhost:8080
+Then visit 👉 http://localhost:8888
 
 ⚙️ Configuration
 
@@ -117,6 +116,32 @@ writers:
   max_level: fatal
 ```
 For full configuration options, see the [zeroconfig documentation](https://github.com/tulir/zeroconfig).
+
+## 📚 API Documentation (Swagger)
+
+This project uses Swagger (OpenAPI) for automated API documentation, powered by [swaggo/swag](https://github.com/swaggo/swag).
+
+### 📁 Local Swagger files
+The dopcumentation is already generated at the
+```
+./docs/swagger.json
+```
+place
+
+### 🔧 How to generate Swagger docs
+
+If you make changes to your API routes or comments, regenerate the documentation with:
+```
+swag init
+```
+This will update the docs/ folder with the latest Swagger spec.
+Make sure swag is installed:
+```
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+###Where to access the docs online
+Once the application is running, the Swagger UI is available at:
+http://localhost:8888/swagger/index.html
 
 ## 🛣️ Roadmap
  - ☐ Edit Author

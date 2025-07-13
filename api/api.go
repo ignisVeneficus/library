@@ -13,31 +13,52 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// pagination structure
 type Pagination struct {
-	Qty          int    `json:"qty"`
-	Pages        int    `json:"pages"`
-	PerPage      int    `json:"perPage"`
-	SelectedPage int    `json:"selectedPage"`
-	BaseUrl      string `json:"base"`
+	//number of the all results
+	Qty int `json:"qty"`
+	//number of tha pages
+	Pages int `json:"pages"`
+	//results per page
+	PerPage int `json:"perPage"`
+	//selected, actual page number
+	SelectedPage int `json:"selectedPage"`
+	//bas url for reloding
+	BaseUrl string `json:"base"`
 }
+
+// filter response
 type Filter struct {
-	FilterType  string `json:"type"`
+	// type of the filter
+	FilterType string `json:"type"`
+	// value of the filter
 	FilterValue string `json:"value"`
 }
 
+// autocomplete data for replace item in UI
 type SuggestionData struct {
-	Id   int    `json:"id"`
+	//id of the data
+	Id int `json:"id"`
+	//Text of the data
 	Name string `json:"name"`
-	Url  string `json:"url"`
-}
-type SuggestionItem struct {
-	Value string         `json:"value"`
-	Data  SuggestionData `json:"data"`
+	//url of the data
+	Url string `json:"url"`
 }
 
+// packed structure for autocomplete
+type SuggestionItem struct {
+	//display text
+	Value string `json:"value"`
+	//data for processing
+	Data SuggestionData `json:"data"`
+}
+
+// response of the autocomplete apis
 type Suggestions struct {
-	Query string           `json:"query"`
-	List  []SuggestionItem `json:"suggestions"`
+	//query string
+	Query string `json:"query"`
+	//result list
+	List []SuggestionItem `json:"suggestions"`
 }
 
 func getPagination(base string, qty int64, page int, qtyPage int) Pagination {
@@ -103,6 +124,13 @@ func (ns NullString) MarshalJSON() ([]byte, error) {
 	return json.Marshal(ret)
 }
 
+// DownloadAllBook endpoint
+// @Summary create a json file for all books in the system
+// @Description The endpont give back file for every ebook in the database
+// @Tags book
+// @Produce application/json
+// @Success 200 {file} file "JSON file containing book list"
+// @Router /export [get]
 func DownloadAllBook(c *gin.Context) {
 	log.Logger.Debug().Msg("Start Api.DownloadAllBook")
 	data, err := GetAllBookAsJSON()

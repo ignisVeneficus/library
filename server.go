@@ -21,6 +21,10 @@ import (
 	"github.com/ignisVeneficus/library/file"
 	"github.com/ignisVeneficus/library/scraper"
 	"github.com/ignisVeneficus/library/status"
+
+	_ "github.com/ignisVeneficus/library/docs"
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 var (
@@ -68,6 +72,18 @@ func help() {
 	flag.PrintDefaults()
 
 }
+
+// @title           eBook library API
+// @version         1.0
+// @description     Query/edit eBook metadata
+
+// @host      localhost:8888
+// @BasePath  /api/
+
+// @securityDefinitions.basic  none
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	flag.Usage = help
 
@@ -128,6 +144,8 @@ func main() {
 
 		router.GET("/api/scraper/", api.Scrape)
 		router.GET("/api/export", api.DownloadAllBook)
+
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 		// Listen and serve on 0.0.0.0:8080
 		router.Run(":8888")

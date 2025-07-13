@@ -17,21 +17,33 @@ import (
 
 const seriesPageQty = 100
 
+// Book series item
 type Series struct {
-	SeriesId NullNumber `json:"id"`
-	Name     string     `json:"name"`
-	Seqno    NullNumber `json:"seqno"`
-	Url      NullString `json:"url"`
+	//Id of the series
+	SeriesId NullNumber `json:"id" swaggertype:"integer"`
+	//Name (title) of the series
+	Name string `json:"name"`
+	//Book order in the series
+	Seqno NullNumber `json:"seqno" swaggertype:"integer"`
+	//external Url of the series
+	Url NullString `json:"url" swaggertype:"string"`
 }
 
+// Series with book count
 type ListSeries struct {
 	Series
+	//book count in this series
 	BookQty int `json:"books"`
 }
+
+// Response of the series query
 type SeriesResponse struct {
-	Pagination Pagination   `json:"pagination"`
-	Filters    []Filter     `json:"filter"`
-	Series     []ListSeries `json:"result"`
+	//list pagination
+	Pagination Pagination `json:"pagination"`
+	//filter/query information
+	Filters []Filter `json:"filter"`
+	//Series
+	Series []ListSeries `json:"result"`
 }
 
 func convertDBOSeriesToApiSeries(dbo dbo.Series) Series {
@@ -67,6 +79,15 @@ func convertDBOListSeriesToApiListSeries(dbo dbo.ListSeries) ListSeries {
 	}
 }
 
+// GetAllSeries endpoint
+// @Summary Query for Series metadata
+// @Description The endpont give back a list of series with pagging, filtering information
+// @Param page query int false "page number, start with 1, default is 1"
+// @Param q query string false "A query string used to filter series based on their title/name."
+// @Tags series
+// @Produce json
+// @Success 200 {object} SeriesResponse
+// @Router /series [get]
 func GetAllSeries(c *gin.Context) {
 	baseUrl := c.FullPath() + "?"
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -124,6 +145,16 @@ func GetAllSeries(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, ret)
 	log.Logger.Debug().Str("Query", query).Msg("End Api.GetAllSeries")
 }
+
+// QuerySeries endpoint
+// @Summary Query Series for autocomplete
+// @Description The endpont give back a list of series for the given query string
+// @Param query query string false "A query string used to filter series based on their title."
+// @Tags series
+// @Produce json
+// @Success 200 {object} Suggestions
+// @Router /query/series [get]
+
 func QuerySeries(c *gin.Context) {
 	query := c.DefaultQuery("query", "")
 	ctx := context.Background()

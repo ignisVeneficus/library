@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/ignisVeneficus/library/db"
 	"github.com/ignisVeneficus/library/db/dao"
 	"github.com/ignisVeneficus/library/db/dbo"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -17,32 +18,54 @@ import (
 
 const bookPageQty = 50 //100
 
+// Book metadata
 type Book struct {
-	BookId     NullNumber `json:"id"`
-	Title      NullString `json:"title"`
-	HasCover   bool       `json:"hasCover"`
-	CoverColor NullString `json:"coverColor"`
-	Url        NullString `json:"url"`
-	Authors    []Author   `json:"authors"`
-	Series     []Series   `json:"series"`
-	Tags       []Tag      `json:"tags"`
-	CoverType  NullString `json:"coverType"`
-	File       string     `json:"file"`
-	Blurb      NullString `json:"blurb"`
-	Edited     int        `json:"edited"`
-	FileType   string     `json:"fileType"`
+	//id of the book
+	BookId NullNumber `json:"id" swaggertype:"integer"`
+	//Title of the book (if present)
+	Title NullString `json:"title"  swaggertype:"string"`
+	//Book has cover image
+	HasCover bool `json:"hasCover"`
+	//If has cover image, itas the avarage cover color
+	CoverColor NullString `json:"coverColor" swaggertype:"string"`
+	//external Url of the book
+	Url NullString `json:"url" swaggertype:"string"`
+	//list of authors
+	Authors []Author `json:"authors"`
+	//list of series
+	Series []Series `json:"series"`
+	//list of tags
+	Tags []Tag `json:"tags"`
+	//cover filetype (if present cover image)
+	CoverType NullString `json:"coverType" swaggertype:"string"`
+	//file of the book
+	File string `json:"file"`
+	//blurb if the book
+	Blurb NullString `json:"blurb" swaggertype:"string"`
+	//True if the metadata at least once has be saved (it will not overwriten by any automatic process)
+	Edited int `json:"edited"`
+	//type of the ebook: epub or mobipocket (prc, azw)
+	FileType string `json:"fileType"`
 }
 
+// Extra information about the filtering, example fiulter by author: terry
 type ExtraDisplay struct {
+	//type, description of extra information
 	Type string `json:"type"`
-	Data int    `json:"data"`
+	//data for the filtering
+	Data int `json:"data"`
 }
 
+// Response of the book query
 type BookResponse struct {
-	Pagination Pagination   `json:"pagination"`
-	Filters    []Filter     `json:"filter"`
-	Books      []Book       `json:"result"`
-	Display    ExtraDisplay `json:"display"`
+	//list pagination
+	Pagination Pagination `json:"pagination"`
+	//filter/query information
+	Filters []Filter `json:"filter"`
+	//list opf the books
+	Books []Book `json:"result"`
+	//Extra display information
+	Display ExtraDisplay `json:"display"`
 }
 
 func convertDBOBookToApiBook(dbo dbo.Book) Book {
@@ -275,6 +298,18 @@ func getBookByQuery(baseUrl string, query string, page int) (BookResponse, error
 	return ret, nil
 }
 
+// GetBooks endpoint
+// @Summary Query for books metadata
+// @Description The endpont give back a list of book metadata with pagging, filtering information
+// @Param page query int false "page number, start with 1, default is 1"
+// @Param ai query int false "author ID used to filter books based on authors"
+// @Param si query int false "series ID used to filter books based on series"
+// @Param ti query int false "tag ID used to filter books based on tags"
+// @Param q query string false "A query string used to filter books based on their description, title, author, series, and tags."
+// @Tags book
+// @Produce json
+// @Success 200 {object} BookResponse
+// @Router /book [get]
 func GetAllBook(c *gin.Context) {
 	baseUrl := c.FullPath() + "?"
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -362,6 +397,16 @@ func GetAllBook(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, ret)
 	log.Logger.Debug().Msg("End Api.GetAllBook")
 }
+
+// GetBook endpoint
+// @Summary Get a book metadata
+// @Description The endpont give back the given book netadata
+// @Param bookId path int true "ID of the book"
+// @Tags book
+// @Produce json
+// @Success 200 {object} Book
+// @Failure 404 {string} string "Book not found"
+// @Router /book/{bookId} [get]
 func GetBook(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -389,6 +434,14 @@ func GetBook(c *gin.Context) {
 	log.Logger.Debug().Int("Id", id).Msg("Stop Api.GetBook")
 }
 
+// @Summary Update a book
+// @Description Uopdate a book's metadata
+// @Tags book
+// @Accept json
+// @Produce json
+// @Param book body Book true "Book to update"
+// @Success 200
+// @Router /book [post]
 func PostBook(c *gin.Context) {
 	var book Book
 	c.BindJSON(&book)

@@ -15,20 +15,31 @@ import (
 
 const authorPageQty = 100
 
+// author of a book
 type Author struct {
-	AuthorId NullNumber `json:"id"`
-	Name     string     `json:"name"`
-	Url      NullString `json:"url"`
+	//Id of the author
+	AuthorId NullNumber `json:"id" swaggertype:"integer"`
+	//Name of the author
+	Name string `json:"name"`
+	//external url of the author
+	Url NullString `json:"url" swaggertype:"string"`
 }
 
+// Author with book count
 type ListAuthor struct {
 	Author
+	//book count of the author
 	BookQty int `json:"books"`
 }
+
+// Response of the author query
 type AuthorResponse struct {
-	Pagination Pagination   `json:"pagination"`
-	Filters    []Filter     `json:"filter"`
-	Authors    []ListAuthor `json:"result"`
+	//list pagination
+	Pagination Pagination `json:"pagination"`
+	//filter/query information
+	Filters []Filter `json:"filter"`
+	//authors
+	Authors []ListAuthor `json:"result"`
 }
 
 func convertDBOAuthorToApiAuthor(dbo dbo.Author) Author {
@@ -53,6 +64,15 @@ func convertApiAuthorToDBOAuthor(api Author) dbo.Author {
 	}
 }
 
+// GetAllAuthor endpoint
+// @Summary Query for Authors metadata
+// @Description The endpont give back a list of authors with pagging, filtering information
+// @Param page query int false "page number, start with 1, default is 1"
+// @Param q query string false "A query string used to filter authors based on their names."
+// @Tags author
+// @Produce json
+// @Success 200 {object} AuthorResponse
+// @Router /author [get]
 func GetAllAuthor(c *gin.Context) {
 	baseUrl := c.FullPath() + "?"
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -111,6 +131,15 @@ func GetAllAuthor(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, ret)
 	log.Logger.Debug().Msg("End Api.GetAllAuthor")
 }
+
+// QueryAuthors endpoint
+// @Summary Query Authors for autocomplete
+// @Description The endpont give back a list of authors for the given query string
+// @Param query query string false "A query string used to filter authors based on their names."
+// @Tags author
+// @Produce json
+// @Success 200 {object} Suggestions
+// @Router /query/author [get]
 func QueryAuthors(c *gin.Context) {
 	query := c.DefaultQuery("query", "")
 	ctx := context.Background()

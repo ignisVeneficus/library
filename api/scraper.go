@@ -2,27 +2,43 @@ package api
 
 import (
 	"fmt"
-	"github.com/ignisVeneficus/library/webscraper"
 	"net/http"
+
+	"github.com/ignisVeneficus/library/webscraper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
+// result of the web-scraper
 type ScraperResult struct {
-	Title   string          `json:"title"`
+	//title of the book
+	Title string `json:"title"`
+	//list of authors
 	Authors []ScraperAuthor `json:"authors"`
-	Series  []ScraperSeries `json:"series"`
-	Tags    []string        `json:"tags"`
-	Blurb   string          `json:"blurb"`
+	//list of the series
+	Series []ScraperSeries `json:"series"`
+	//list of the tags
+	Tags []string `json:"tags"`
+	//blurb of the book
+	Blurb string `json:"blurb"`
 }
+
+// Author of the scraped book
 type ScraperAuthor struct {
-	Url  string `json:"url"`
+	//external Url
+	Url string `json:"url"`
+	//name of the author
 	Name string `json:"name"`
 }
+
+// Series of the scraped book
 type ScraperSeries struct {
-	Url   string `json:"url"`
-	Name  string `json:"name"`
+	//external Url
+	Url string `json:"url"`
+	//name of the series
+	Name string `json:"name"`
+	//book's position in the series
 	SeqNo string `json:"seqno"`
 }
 
@@ -61,6 +77,13 @@ func convertScraperMetadata(metadata webscraper.Metadata) ScraperResult {
 	return ret
 }
 
+// Scraper endpoint
+// @Summary Scrape and process an url
+// @Description The endpont give a processed url andpoint as a book
+// @Param url query string true "The url need to scrape"
+// @Produce json
+// @Success 200 {object} ScraperResult
+// @Router /api/scraper/ [get]
 func Scrape(c *gin.Context) {
 	url := c.Query("url")
 	log.Logger.Debug().Str("Url", url).Msg("Start Api.Scrape")
