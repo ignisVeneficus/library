@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `book` (
   KEY `title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `bookauthors` (
+CREATE TABLE IF NOT EXISTS `bookAuthors` (
   `bookAuthorsId` int(11) NOT NULL AUTO_INCREMENT,
   `bookId` int(11) NOT NULL,
   `authorId` int(11) NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `bookauthors` (
   KEY `author` (`authorId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `bookseries` (
+CREATE TABLE IF NOT EXISTS `bookSeries` (
   `bookSeriesId` int(11) NOT NULL AUTO_INCREMENT,
   `bookId` int(11) NOT NULL,
   `seriesId` int(11) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `bookseries` (
   KEY `series` (`seriesId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `booktags` (
+CREATE TABLE IF NOT EXISTS `bookTags` (
   `bookTagId` int(11) NOT NULL AUTO_INCREMENT,
   `bookId` int(11) NOT NULL,
   `tagId` int(11) NOT NULL,

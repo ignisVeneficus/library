@@ -12,7 +12,7 @@ import (
 )
 
 const querySeriesByBook = `SELECT s.seriesId, s.title, s.url, bs.sequence FROM series AS s
-JOIN bookseries AS bs ON s.seriesId = bs.seriesId
+JOIN bookSeries AS bs ON s.seriesId = bs.seriesId
 WHERE bs.bookId = ?
 ORDER BY s.title`
 
@@ -54,22 +54,22 @@ func (q *Queries) UpdateSeries(ctx context.Context, series dbo.Series) error {
 }
 
 // bookSeries query func
-const bindBookSeries = `INSERT INTO bookseries (bookId,seriesId,sequence) VALUES (?,?,?)`
+const bindBookSeries = `INSERT INTO bookSeries (bookId,seriesId,sequence) VALUES (?,?,?)`
 
 func (q *Queries) BindBookSeries(ctx context.Context, bookId int64, seriesId int64, sequence sql.NullInt64) error {
 	_, err := q.db.ExecContext(ctx, bindBookSeries, bookId, seriesId, sequence)
 	return err
 }
 
-const updateBookSeries = `UPDATE bookseries SET sequence = ? WHERE bookId =? and seriesId=?`
+const updateBookSeries = `UPDATE bookSeries SET sequence = ? WHERE bookId =? and seriesId=?`
 
 func (q *Queries) UpdateBookSeries(ctx context.Context, bookId int64, seriesId int64, sequence sql.NullInt64) error {
 	_, err := q.db.ExecContext(ctx, updateBookSeries, sequence, bookId, seriesId)
 	return err
 }
 
-const divideAllSeriesFromBook = "DELETE FROM bookseries WHERE bookid=?"
-const divideSeriesFromBookStart = "DELETE FROM bookseries WHERE bookid=? and seriesId not in (?"
+const divideAllSeriesFromBook = "DELETE FROM bookSeries WHERE bookid=?"
+const divideSeriesFromBookStart = "DELETE FROM bookSeries WHERE bookid=? and seriesId not in (?"
 const divideSeriesFromBookEnd = ")"
 
 func (q *Queries) DivideSeriesFromBook(ctx context.Context, bookId int64, seriesids []int64) error {
@@ -116,7 +116,7 @@ func (q *Queries) GetSeriesById(ctx context.Context, seriesId int64) (dbo.Series
 
 const queryAllSeriesBegin = `SELECT s.seriesid, s.title, s.url, ifnull(bs.Cnt, 0) as books FROM series AS S
 LEFT JOIN 
-	(SELECT seriesId, count(1) Cnt FROM bookseries 
+	(SELECT seriesId, count(1) Cnt FROM bookSeries 
 	GROUP BY seriesId) As bs
 	ON bs.seriesId = s.seriesId
 `

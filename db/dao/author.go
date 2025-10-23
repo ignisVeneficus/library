@@ -12,7 +12,7 @@ import (
 )
 
 // delete not used authors
-const deleteOrphanAuthors = `delete a from library.author a left join library.bookauthors as ba on ba.authorId = a.authorId where ba.bookId is null`
+const deleteOrphanAuthors = `delete a from library.author a left join library.bookAuthors as ba on ba.authorId = a.authorId where ba.bookId is null`
 
 // Author query func
 const getAuthor = `SELECT authorId, name, url FROM author WHERE name = ?`
@@ -57,7 +57,7 @@ func (q *Queries) UpdateAuthor(ctx context.Context, author dbo.Author) error {
 }
 
 // bookAuthor query func
-const bindBookAuthor = `INSERT INTO bookauthors (bookId,authorId) VALUES (?,?)`
+const bindBookAuthor = `INSERT INTO bookAuthors (bookId,authorId) VALUES (?,?)`
 
 func (q *Queries) BindBookAuthor(ctx context.Context, bookId int64, authorId int64) error {
 	_, err := q.db.ExecContext(ctx, bindBookAuthor, bookId, authorId)
@@ -72,7 +72,7 @@ func (q *Queries) RebindBookAuthor(ctx context.Context, oldAuthor int64, newAuth
 }
 
 const queryAuthorsByBook = `SELECT a.authorid, a.name, a.url FROM author AS a
-JOIN bookauthors AS ba ON a.authorId = ba.authorId
+JOIN bookAuthors AS ba ON a.authorId = ba.authorId
 WHERE ba.bookId = ?
 ORDER BY a.name`
 
@@ -144,8 +144,8 @@ func (q *Queries) QueryAllAuthor(ctx context.Context, name string, from int64, q
 	return items, nil
 }
 
-const divideAllAuthorFromBook = "DELETE FROM bookauthors WHERE bookid=?"
-const divideAuthosFromBookStart = "DELETE FROM bookauthors WHERE bookid=? and authorId not in (?"
+const divideAllAuthorFromBook = "DELETE FROM bookAuthors WHERE bookid=?"
+const divideAuthosFromBookStart = "DELETE FROM bookAuthors WHERE bookid=? and authorId not in (?"
 const divideAuthosFromBookEnd = ")"
 
 func (q *Queries) DivideAuthorsFromBook(ctx context.Context, bookId int64, authorids []int64) error {

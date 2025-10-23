@@ -3,8 +3,9 @@ package dao
 import (
 	"context"
 	"database/sql"
-	"github.com/ignisVeneficus/library/db/dbo"
 	"strings"
+
+	"github.com/ignisVeneficus/library/db/dbo"
 
 	"github.com/rs/zerolog/log"
 )
@@ -30,9 +31,9 @@ const (
 )
 
 const deleteBook = `DELETE FROM book WHERE bookId = ?`
-const deleteBookAuthors = `DELETE FROM bookauthors WHERE bookId = ?`
-const deleteBookSeries = `DELETE FROM bookseries WHERE bookId = ?`
-const deleteBookTags = `DELETE FROM booktags WHERE bookId = ?`
+const deleteBookAuthors = `DELETE FROM bookAuthors WHERE bookId = ?`
+const deleteBookSeries = `DELETE FROM bookSeries WHERE bookId = ?`
+const deleteBookTags = `DELETE FROM bookTags WHERE bookId = ?`
 
 func (q *Queries) DeleteBook(ctx context.Context, bookId int64) error {
 	_, err := q.db.ExecContext(ctx, deleteBook, bookId)
@@ -175,21 +176,21 @@ const queryBookFilter = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name
 FROM (
 	(SELECT b1.bookId, b1.title, b1.format, b1.file, b1.hash, b1.updatets, b1.url, b1.isbn, b1.covercolor, b1.edited, b1.hascover, b1.covertype, b1.blurb
 		FROM author AS a1
-		JOIN bookauthors AS ba1 ON a1.authorID = ba1.authorID
+		JOIN bookAuthors AS ba1 ON a1.authorID = ba1.authorID
 		JOIN book AS b1 ON ba1.bookID = b1.bookID
 		WHERE a1.name like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b2.bookId, b2.title, b2.format, b2.file, b2.hash, b2.updatets, b2.url, b2.isbn, b2.covercolor, b2.edited, b2.hascover, b2.covertype, b2.blurb
 		FROM series AS s2
-		JOIN bookseries AS bs2 ON s2.seriesID = bs2.seriesID
+		JOIN bookSeries AS bs2 ON s2.seriesID = bs2.seriesID
 		JOIN book AS b2 ON bs2.bookID = b2.bookID
 		WHERE s2.title like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b3.bookId, b3.title, b3.format, b3.file, b3.hash, b3.updatets, b3.url, b3.isbn, b3.covercolor, b3.edited, b3.hascover, b3.covertype, b3.blurb
 		FROM tag AS t3
-		JOIN booktags AS bt3 ON t3.tagID = bt3.tagID
+		JOIN bookTags AS bt3 ON t3.tagID = bt3.tagID
 		JOIN book AS b3 ON bt3.bookID = b3.bookID
 		WHERE t3.name like concat('%',?,'%')
 	)
@@ -199,7 +200,7 @@ FROM (
 		WHERE b4.title like concat('%',?,'%')
 	)
 ) as b
-LEFT OUTER JOIN bookauthors AS ba ON b.bookId = ba.bookId
+LEFT OUTER JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 LEFT OUTER JOIN author AS a ON a.authorId = ba.authorId
 GROUP BY b.bookId
 ORDER BY allauthor, b.title
@@ -208,21 +209,21 @@ LIMIT ?,?`
 const getBookQtyFilter = `SELECT count(*) FROM (
 	(SELECT b1.bookId
 		FROM author AS a1
-		JOIN bookauthors AS ba1 ON a1.authorID = ba1.authorID
+		JOIN bookAuthors AS ba1 ON a1.authorID = ba1.authorID
 		JOIN book AS b1 ON ba1.bookID = b1.bookID
 		WHERE a1.name like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b2.bookId
 		FROM series AS s2
-		JOIN bookseries AS bs2 ON s2.seriesID = bs2.seriesID
+		JOIN bookSeries AS bs2 ON s2.seriesID = bs2.seriesID
 		JOIN book AS b2 ON bs2.bookID = b2.bookID
 		WHERE s2.title like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b3.bookId
 		FROM tag AS t3
-		JOIN booktags AS bt3 ON t3.tagID = bt3.tagID
+		JOIN bookTags AS bt3 ON t3.tagID = bt3.tagID
 		JOIN book AS b3 ON bt3.bookID = b3.bookID
 		WHERE t3.name like concat('%',?,'%')
 	)
@@ -234,14 +235,14 @@ const getBookQtyFilter = `SELECT count(*) FROM (
 ) as cnt`
 
 const queryBook = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', '), '') AS allauthor FROM book AS b
-LEFT OUTER JOIN bookauthors AS ba ON b.bookId = ba.bookId
+LEFT OUTER JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 LEFT OUTER JOIN author AS a ON a.authorId = ba.authorId
 GROUP BY b.bookId
 ORDER BY allauthor, b.title
 LIMIT ?,?`
 
 const queryBookNew = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', '), '') AS allauthor FROM book AS b
-LEFT OUTER JOIN bookauthors AS ba ON b.bookId = ba.bookId
+LEFT OUTER JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 LEFT OUTER JOIN author AS a ON a.authorId = ba.authorId
 WHERE b.edited=0
 GROUP BY b.bookId
@@ -249,7 +250,7 @@ ORDER BY allauthor, b.title
 LIMIT ?,?`
 
 const queryBookFile = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', '), '') AS allauthor FROM book AS b
-LEFT OUTER JOIN bookauthors AS ba ON b.bookId = ba.bookId
+LEFT OUTER JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 LEFT OUTER JOIN author AS a ON a.authorId = ba.authorId
 WHERE b.file LIKE concat('%',?,'%')
 GROUP BY b.bookId
@@ -372,9 +373,9 @@ func (q *Queries) GetBookQty(ctx context.Context, query string) (int64, error) {
 	return count, err
 }
 
-const queryBookByAuthorId = `SELECT ` + selectBook + ` FROM bookauthors ba1
+const queryBookByAuthorId = `SELECT ` + selectBook + ` FROM bookAuthors ba1
 JOIN book as b on b.bookId = ba1.bookId
-JOIN bookauthors AS ba ON b.bookId = ba.bookId
+JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 JOIN author AS a ON a.authorId = ba.authorId
 WHERE ba1.authorId = ?
 GROUP BY b.bookId
@@ -418,7 +419,7 @@ func (q *Queries) QueryBookByAuthorId(ctx context.Context, authorId int64, from 
 	return items, nil
 }
 
-const getBookByAuthorIdQty = `SELECT count(*) FROM (select 1 from bookauthors ba1
+const getBookByAuthorIdQty = `SELECT count(*) FROM (select 1 from bookAuthors ba1
 JOIN book as b on b.bookId = ba1.bookId
 WHERE ba1.authorId = ?
 GROUP BY b.bookId) as cnt;`
@@ -430,9 +431,9 @@ func (q *Queries) GetBookByAuthorIdQty(ctx context.Context, authorId int64) (int
 	return count, err
 }
 
-const queryBookBySeriesId = `SELECT ` + selectBook + ` FROM bookseries bs1
+const queryBookBySeriesId = `SELECT ` + selectBook + ` FROM bookSeries bs1
 JOIN book as b on b.bookId = bs1.bookId
-JOIN bookauthors AS ba ON b.bookId = ba.bookId
+JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 JOIN author AS a ON a.authorId = ba.authorId
 WHERE bs1.seriesId = ?
 GROUP BY b.bookId
@@ -476,7 +477,7 @@ func (q *Queries) QueryBookBySeriesId(ctx context.Context, authorId int64, from 
 	return items, nil
 }
 
-const getBookBySeriesIdQty = `SELECT count(*) FROM (select 1 from bookseries bs1
+const getBookBySeriesIdQty = `SELECT count(*) FROM (select 1 from bookSeries bs1
 JOIN book as b on b.bookId = bs1.bookId
 WHERE bs1.seriesId = ?
 GROUP BY b.bookId) as cnt;`
@@ -517,7 +518,7 @@ func (q *Queries) QueryAllBookId(ctx context.Context) ([]int64, error) {
 
 const queryBookByTagId = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', '), '') AS allauthor FROM bookTags bt1
 JOIN book as b on b.bookId = bt1.bookId
-JOIN bookauthors AS ba ON b.bookId = ba.bookId
+JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 JOIN author AS a ON a.authorId = ba.authorId
 WHERE bt1.tagId = ?
 GROUP BY b.bookId
@@ -565,7 +566,7 @@ func (q *Queries) QueryBookByTagId(ctx context.Context, tagId int64, from int64,
 
 const getBookByTagIdQty = `SELECT count(*) FROM (SELECT 1 FROM bookTags bt1
 JOIN book as b on b.bookId = bt1.bookId
-JOIN bookauthors AS ba ON b.bookId = ba.bookId
+JOIN bookAuthors AS ba ON b.bookId = ba.bookId
 JOIN author AS a ON a.authorId = ba.authorId
 WHERE bt1.tagId = ?
 GROUP BY b.bookId) as cnt;`
