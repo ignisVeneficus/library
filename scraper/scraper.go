@@ -329,14 +329,14 @@ func Parse(observer Observer, basePath string, coverPath string, forceUpdate boo
 			result := utils.Subtract(allIDs, bookIds)
 			log.Logger.Trace().Int("Qty", len(result)).Msg("Books not found")
 			log.Logger.Info().Ints64("Ids", result).Msg("Books will delete")
-			/*
-				for _, i := range result {
-					err = dao.DeleteBook(database, ctx, i)
-					if err != nil {
-						log.Logger.Debug().Int64("Book Id", i).Msg("Book deleted")
-					}
+
+			for _, i := range result {
+				err = dao.DeleteBook(database, ctx, i)
+				if err != nil {
+					log.Logger.Debug().Int64("Book Id", i).Msg("Book deleted")
 				}
-			*/
+			}
+
 		}
 	} else {
 		return err

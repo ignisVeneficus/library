@@ -1,16 +1,26 @@
 package webscraper
 
 import (
-	"github.com/ignisVeneficus/library/utils"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/ignisVeneficus/library/utils"
 
 	"github.com/antchfx/htmlquery"
 	"github.com/rs/zerolog/log"
 )
 
-const urlRoot = "https://moly.hu"
+const (
+	molyUrlRoot = "https://moly.hu"
+
+	HTML_M_CONTENT   = "//div[@id='content']"
+	HTML_M_BLURB     = "//div[@class='text shrinkable']/p"
+	HTML_M_BLURB_ALT = "/div[@class='text']"
+	HTML_M_TITLE     = "//h1//span[@class='item']/text()"
+	HTML_M_AUTHORS   = "//div[@class='authors']//a[not(following-sibling::span[@class='data'])]"
+	HTML_M_SERIES    = "//h1//span[@class='item']//a"
+)
 
 type Moly struct {
 }
@@ -19,7 +29,7 @@ func (m *Moly) Name() string {
 	return "Moly.hu"
 }
 func (m *Moly) CheckUrl(url string) bool {
-	return strings.HasPrefix(url, urlRoot)
+	return strings.HasPrefix(url, molyUrlRoot)
 }
 
 func (m *Moly) Scrape(url string) (Metadata, error) {
@@ -34,27 +44,28 @@ func (m *Moly) Scrape(url string) (Metadata, error) {
 		return ret, err
 	}
 	// content
-	contentNodes, err := htmlquery.Query(doc, "//div[@id='content']")
+	contentNodes, err := htmlquery.Query(doc, HTML_M_CONTENT)
 	if err != nil {
 		log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 		return ret, err
 	}
 
 	// blurb
-	blurbNodes, err := htmlquery.QueryAll(doc, "//div[@id='full_description']")
+	blurbNodes, err := htmlquery.QueryAll(doc, HTML_M_BLURB)
 	if err != nil {
 		log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 		return ret, err
 	}
 	blurb := ""
 	for _, b := range blurbNodes {
-		blurb += htmlquery.InnerText(b)
+		log.Logger.Trace().Str("Url", url).Str("Line", htmlquery.InnerText(b)).Msg("Blurb line by line")
+		blurb += htmlquery.InnerText(b) + "\n"
 	}
 
 	log.Logger.Trace().Str("Blurb", blurb).Msg("Blurb in the description node")
 	//diferent type of blurb
 	if blurb == "" {
-		blurbNodes, err := htmlquery.QueryAll(contentNodes, "/div[@class='text']")
+		blurbNodes, err := htmlquery.QueryAll(contentNodes, HTML_M_BLURB_ALT)
 		if err != nil {
 			log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 			return ret, err
@@ -62,18 +73,12 @@ func (m *Moly) Scrape(url string) (Metadata, error) {
 		for _, b := range blurbNodes {
 			blurb += htmlquery.InnerText(b) + "\n"
 		}
-		tblurb := ""
-		if len(blurb) > 50 {
-			tblurb = blurb[0:50]
-		} else {
-			tblurb = blurb
-		}
-		log.Logger.Trace().Str("Url", url).Str("Blurb", tblurb).Msg("Blurb in the text nodes")
+		log.Logger.Trace().Str("Url", url).Str("Blurb", blurb).Msg("Blurb in the text nodes")
 	}
 	blurb = utils.CleanString(blurb)
 	ret.Blurb = strings.Replace(blurb, "Vigyázat! Cselekményleírást tartalmaz.\n", "", 1)
 	// title
-	titleNodes, err := htmlquery.QueryAll(contentNodes, "//h1[@class='book']//span[@class='item']/text()")
+	titleNodes, err := htmlquery.QueryAll(contentNodes, HTML_M_TITLE)
 	if err != nil {
 		log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 		return ret, err
@@ -85,14 +90,14 @@ func (m *Moly) Scrape(url string) (Metadata, error) {
 	log.Logger.Trace().Str("Url", url).Str("Title", title).Msg("Found Title")
 	ret.Title = strings.TrimSpace(utils.CleanString(title))
 	// authors
-	authorNodes1, err := htmlquery.QueryAll(contentNodes, "//div[@class='authors']//a[not(following-sibling::span[@class='data'])]")
+	authorNodes1, err := htmlquery.QueryAll(contentNodes, HTML_M_AUTHORS)
 	if err != nil {
 		log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 		return ret, err
 	}
 	authors := make([]Link, 0)
 	for _, an := range authorNodes1 {
-		nodeUrl := urlRoot + htmlquery.SelectAttr(an, "href")
+		nodeUrl := molyUrlRoot + htmlquery.SelectAttr(an, "href")
 		value := utils.CleanString(htmlquery.InnerText(an))
 		log.Logger.Trace().Str("Url", url).Str("Author", value).Msg("Found author")
 		link := Link{
@@ -104,14 +109,14 @@ func (m *Moly) Scrape(url string) (Metadata, error) {
 	ret.Authors = authors
 
 	series := make([]SeriesLink, 0)
-	seriesNode1, err := htmlquery.QueryAll(contentNodes, "//h1[@class='book']//span[@class='item']//a")
+	seriesNode1, err := htmlquery.QueryAll(contentNodes, HTML_M_SERIES)
 	if err != nil {
 		log.Logger.Error().Err(err).Str("Url", url).Msg("Scraping faild")
 		return ret, err
 	}
 	regEx := regexp.MustCompile(`(.*)( (\d+)\.)`)
 	for _, an := range seriesNode1 {
-		nodeUrl := urlRoot + htmlquery.SelectAttr(an, "href")
+		nodeUrl := molyUrlRoot + htmlquery.SelectAttr(an, "href")
 		text := strings.Trim(utils.CleanString(htmlquery.InnerText(an)), "()")
 		match := regEx.FindStringSubmatch(text)
 		name := ""
@@ -146,7 +151,7 @@ func (m *Moly) Scrape(url string) (Metadata, error) {
 	}
 	for _, on := range otherNodes {
 		nodeUrl := htmlquery.SelectAttr(on, "href")
-		fullUrl := urlRoot + nodeUrl
+		fullUrl := molyUrlRoot + nodeUrl
 		value := utils.CleanString(htmlquery.InnerText(on))
 		if strings.HasPrefix(nodeUrl, "/alkotok/") {
 			link := Link{
