@@ -14,6 +14,7 @@ Think of it as a personal ebook server: it scans your local collection, extracts
 - 🧭 Searchable web interface
 - 💾 Stores data in a database (local, or remote) (mysql or mariadb)
 - 📤 Designed to serve ebooks to external ebook readers (e.g. via download links)
+- 🐳 Optional Docker support for easy deployment with configurable volumes, user IDs (PUID/PGID), and environment variables
 
 ## ⚠️ Disclaimer
 
@@ -143,6 +144,64 @@ go install github.com/swaggo/swag/cmd/swag@latest
 Once the application is running, the Swagger UI is available at:
 http://localhost:8888/swagger/index.html
 
+## 🐳 Usage with Docker
+
+### 📦 Build the image
+
+Clone the repository and build the image using the Dockerfile located in the `docker/` directory:
+
+```bash
+git clone https://github.com/ignisVeneficus/library.git
+cd library
+
+# Build the Docker image
+docker build -f docker/Dockerfile -t library .
+```
+To always fetch the latest version from GitHub (no build cache):
+```bash
+docker build --no-cache -f docker/Dockerfile -t library .
+```
+### 🚀 Run the container
+```bash
+docker run -d \
+  --name library \
+  -p 8880:8888 \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Europe/Budapest \
+  -e LIBRARY_DB_USERNAME=dbuser \
+  -e LIBRARY_DB_PASSWORD=mysecret \
+  -e LIBRARY_DB_HOST=mydatabase \
+  -e LIBRARY_DB_DATABASE=library \
+
+  -v /host/books:/books \
+  -v /host/covers:/covers \
+  library
+```
+### 🧪 Using Docker Compose
+```yaml
+services:
+  library:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: library
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Budapest
+      - "LIBRARY_DB_USERNAME=dbuser"
+      - "LIBRARY_DB_PASSWORD=mysecret"
+      - "LIBRARY_DB_HOST=mydatabase"
+      - "LIBRARY_DB_DATABASE=library"
+    volumes:
+      - /host/books:/books
+      - /host/covers:/covers
+    ports:
+      - "8888:8888"
+    restart: unless-stopped
+```
+
 ## 🛣️ Roadmap
  - ☐ Edit Author
  - ☐ Edit Series
@@ -150,7 +209,6 @@ http://localhost:8888/swagger/index.html
  - ☐ Maintaince tasks (delete orphan authors, tags, series, etc )
  - ☐ UI redesign for smaller screens
  - ☐ Import 
- - ☐ Docker container
  - ☐ Possibility to change UI to different webapp
 
 ## 📝 License
