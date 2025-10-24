@@ -71,7 +71,7 @@ func (q *Queries) RebindBookAuthor(ctx context.Context, oldAuthor int64, newAuth
 	return err
 }
 
-const queryAuthorsByBook = `SELECT a.authorid, a.name, a.url FROM author AS a
+const queryAuthorsByBook = `SELECT a.authorId, a.name, a.url FROM author AS a
 JOIN bookAuthors AS ba ON a.authorId = ba.authorId
 WHERE ba.bookId = ?
 ORDER BY a.name`
@@ -99,7 +99,7 @@ func (q *Queries) QueryAuthorsByBook(ctx context.Context, bookid int64) ([]dbo.A
 	return items, nil
 }
 
-const queryAllAuthorBegin = `SELECT a.authorid, a.name, a.url, ifnull(ba.Cnt, 0) as books FROM author AS a
+const queryAllAuthorBegin = `SELECT a.authorId, a.name, a.url, ifnull(ba.Cnt, 0) as books FROM author AS a
 LEFT JOIN 
 	(SELECT authorId, count(1) Cnt FROM bookAuthors 
 	GROUP BY authorId) As ba
@@ -178,7 +178,7 @@ func (q *Queries) GetAuthorQty(ctx context.Context, name string) (int64, error) 
 	return count, err
 }
 
-const queryAuthorAutocomplete = `SELECT a.authorid, a.name, a.url FROM author AS a WHERE a.name like concat('%',?,'%')`
+const queryAuthorAutocomplete = `SELECT a.authorId, a.name, a.url FROM author AS a WHERE a.name like concat('%',?,'%')`
 
 func (q *Queries) QueryAuthorAutocomplete(ctx context.Context, title string) ([]dbo.AutoComplete, error) {
 	rows, err := q.db.QueryContext(ctx, queryAuthorAutocomplete, title)

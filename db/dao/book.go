@@ -124,7 +124,7 @@ func (q *Queries) UpdateBookMetadata(ctx context.Context, book dbo.Book) error {
 	return err
 }
 
-const selectBook = `b.bookId, b.title, b.format, b.file, b.hash, b.updatets, b.url, b.isbn, b.covercolor, b.edited, b.hascover, b.covertype, b.blurb`
+const selectBook = `b.bookId, b.title, b.format, b.file, b.hash, b.updateTs, b.url, b.isbn, b.coverColor, b.edited, b.hasCover, b.coverType, b.blurb`
 
 const getBookByHash = `SELECT ` + selectBook + ` FROM book AS b WHERE hash = ?`
 
@@ -174,28 +174,28 @@ func (q *Queries) GetBookById(ctx context.Context, id int64) (dbo.Book, error) {
 
 const queryBookFilter = `SELECT ` + selectBook + `, COALESCE(GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', '), '') AS allauthor 
 FROM (
-	(SELECT b1.bookId, b1.title, b1.format, b1.file, b1.hash, b1.updatets, b1.url, b1.isbn, b1.covercolor, b1.edited, b1.hascover, b1.covertype, b1.blurb
+	(SELECT b1.bookId, b1.title, b1.format, b1.file, b1.hash, b1.updateTs, b1.url, b1.isbn, b1.coverColor, b1.edited, b1.hasCover, b1.coverType, b1.blurb
 		FROM author AS a1
-		JOIN bookAuthors AS ba1 ON a1.authorID = ba1.authorID
-		JOIN book AS b1 ON ba1.bookID = b1.bookID
+		JOIN bookAuthors AS ba1 ON a1.authorId = ba1.authorId
+		JOIN book AS b1 ON ba1.bookId = b1.bookId
 		WHERE a1.name like concat('%',?,'%')
 	)
 	UNION
-	(SELECT b2.bookId, b2.title, b2.format, b2.file, b2.hash, b2.updatets, b2.url, b2.isbn, b2.covercolor, b2.edited, b2.hascover, b2.covertype, b2.blurb
+	(SELECT b2.bookId, b2.title, b2.format, b2.file, b2.hash, b2.updateTs, b2.url, b2.isbn, b2.coverColor, b2.edited, b2.hasCover, b2.coverType, b2.blurb
 		FROM series AS s2
-		JOIN bookSeries AS bs2 ON s2.seriesID = bs2.seriesID
-		JOIN book AS b2 ON bs2.bookID = b2.bookID
+		JOIN bookSeries AS bs2 ON s2.seriesId = bs2.seriesId
+		JOIN book AS b2 ON bs2.bookId = b2.bookId
 		WHERE s2.title like concat('%',?,'%')
 	)
 	UNION
-	(SELECT b3.bookId, b3.title, b3.format, b3.file, b3.hash, b3.updatets, b3.url, b3.isbn, b3.covercolor, b3.edited, b3.hascover, b3.covertype, b3.blurb
+	(SELECT b3.bookId, b3.title, b3.format, b3.file, b3.hash, b3.updateTs, b3.url, b3.isbn, b3.coverColor, b3.edited, b3.hasCover, b3.coverType, b3.blurb
 		FROM tag AS t3
-		JOIN bookTags AS bt3 ON t3.tagID = bt3.tagID
-		JOIN book AS b3 ON bt3.bookID = b3.bookID
+		JOIN bookTags AS bt3 ON t3.tagId = bt3.tagId
+		JOIN book AS b3 ON bt3.bookId = b3.bookId
 		WHERE t3.name like concat('%',?,'%')
 	)
 	UNION
-	(SELECT b4.bookId, b4.title, b4.format, b4.file, b4.hash, b4.updatets, b4.url, b4.isbn, b4.covercolor, b4.edited, b4.hascover, b4.covertype, b4.blurb
+	(SELECT b4.bookId, b4.title, b4.format, b4.file, b4.hash, b4.updateTs, b4.url, b4.isbn, b4.coverColor, b4.edited, b4.hasCover, b4.coverType, b4.blurb
 		FROM book AS b4
 		WHERE b4.title like concat('%',?,'%')
 	)
@@ -209,22 +209,22 @@ LIMIT ?,?`
 const getBookQtyFilter = `SELECT count(*) FROM (
 	(SELECT b1.bookId
 		FROM author AS a1
-		JOIN bookAuthors AS ba1 ON a1.authorID = ba1.authorID
-		JOIN book AS b1 ON ba1.bookID = b1.bookID
+		JOIN bookAuthors AS ba1 ON a1.authorId = ba1.authorId
+		JOIN book AS b1 ON ba1.bookId = b1.bookId
 		WHERE a1.name like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b2.bookId
 		FROM series AS s2
-		JOIN bookSeries AS bs2 ON s2.seriesID = bs2.seriesID
-		JOIN book AS b2 ON bs2.bookID = b2.bookID
+		JOIN bookSeries AS bs2 ON s2.seriesId = bs2.seriesId
+		JOIN book AS b2 ON bs2.bookId = b2.bookId
 		WHERE s2.title like concat('%',?,'%')
 	)
 	UNION
 	(SELECT b3.bookId
 		FROM tag AS t3
-		JOIN bookTags AS bt3 ON t3.tagID = bt3.tagID
-		JOIN book AS b3 ON bt3.bookID = b3.bookID
+		JOIN bookTags AS bt3 ON t3.tagId = bt3.tagId
+		JOIN book AS b3 ON bt3.bookId = b3.bookId
 		WHERE t3.name like concat('%',?,'%')
 	)
 	UNION
