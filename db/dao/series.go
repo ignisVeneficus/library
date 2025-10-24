@@ -114,7 +114,7 @@ func (q *Queries) GetSeriesById(ctx context.Context, seriesId int64) (dbo.Series
 	return i, err
 }
 
-const queryAllSeriesBegin = `SELECT s.seriesId, s.title, s.url, ifnull(bs.Cnt, 0) as books FROM series AS S
+const queryAllSeriesBegin = `SELECT s.seriesId, s.title, s.url, ifnull(bs.Cnt, 0) as books FROM series AS s
 LEFT JOIN 
 	(SELECT seriesId, count(1) Cnt FROM bookSeries 
 	GROUP BY seriesId) As bs
